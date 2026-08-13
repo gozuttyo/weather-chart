@@ -1,1 +1,1 @@
-window.APP_CONFIG = { proxyBase: "https://YOUR-WORKER.workers.dev" };
+window.APP_CONFIG = { proxyBase: "https://gozuttyo.github.io/weather-chart/" };
