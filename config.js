@@ -1,1 +1,1 @@
-window.APP_CONFIG = { proxyBase: "https://gozuttyo.github.io/weather-chart/" };
+window.APP_CONFIG = { proxyBase: "https://jma-pdf-proxy.yamakan-yurukyara0615.workers.dev/" };
