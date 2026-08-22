@@ -103,3 +103,25 @@ Cloudflare Workerの変更は不要です。GitHub Pages側では `app.js` をV6
 - 時刻を変更した時点で資料一覧を再描画するため、以前選択していた資料が新しい時刻に対応しない場合は自動的に選択解除される。
 - 00 UTC と 12 UTC は時刻選択欄で赤字・太字にする。
 - Safari等でプルダウン内の個別 option 色が反映されない場合も、00/12 UTCを選択中は選択欄本体が赤字になる。
+
+
+## V8変更: 過去の雨雲レーダー
+
+実況・解析モードに「レーダー」を追加。
+
+- UTC / JSTを選択可能
+- 日付・時刻はレーダー専用欄で指定
+- 時刻は10分単位
+- GPV Weather掲載の20地域から選択
+- Cloudflare Browser RunでGPV Weatherページを描画
+- 地域ボタンを自動選択
+- レーダー画像部分をPNGとして取得し、最終PDFへ追加
+
+### Cloudflare追加設定
+
+この機能のみ Browser Run binding が必要。
+
+Workerの Settings → Bindings から Browser Run を追加し、
+binding名を `BROWSER` にする。
+
+Cloudflare Browser RunはFree/Paidで利用できるが、Free planには利用時間上限がある。
