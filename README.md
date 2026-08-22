@@ -125,3 +125,9 @@ Workerの Settings → Bindings から Browser Run を追加し、
 binding名を `BROWSER` にする。
 
 Cloudflare Browser RunはFree/Paidで利用できるが、Free planには利用時間上限がある。
+
+
+## V8.1 修正
+V8で `app.js` にレーダー設定欄の参照を追加した一方、配布ZIP内の `index.html` に対応するHTML要素が入っていなかったため、JavaScriptが初期化時に停止し、資料一覧が表示されない問題を修正。
+
+V8.1ではレーダー設定欄を `index.html` に追加し、要素が存在しない場合でも資料一覧全体が停止しないように防御処理も追加。

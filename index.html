@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>気象資料PDF作成</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+</head>
+<body>
+<main class="wrap">
+  <h1>気象資料PDF作成</h1>
+  <p class="lead">指定日時に対応する気象資料を選択し、1つのPDFとして出力します。</p>
+  <section class="card"><div class="grid">
+    <label>対象日時<input id="date" type="date"></label>
+    <label>時刻<select id="hour">
+      <option value="00" class="major-time">00 UTC（09 JST）</option><option value="03">03 UTC（12 JST）</option>
+      <option value="06">06 UTC（15 JST）</option><option value="09">09 UTC（18 JST）</option>
+      <option value="12" class="major-time">12 UTC（21 JST）</option><option value="15">15 UTC（翌00 JST）</option>
+      <option value="18">18 UTC（翌03 JST）</option><option value="21">21 UTC（翌06 JST）</option>
+    </select></label>
+    <label>モード<select id="mode"><option value="analysis">実況・解析</option><option value="forecast">予報</option></select></label>
+  </div></section>
+  <section class="card"><h2>資料選択</h2><div id="chart-list"></div></section>
+
+  <section class="card" id="radar-options" hidden>
+    <h2>レーダー設定</h2>
+    <div class="grid">
+      <label>時刻基準
+        <select id="radar-timezone">
+          <option value="UTC">UTC（世界時）</option>
+          <option value="JST">JST（日本時間）</option>
+        </select>
+      </label>
+      <label>日付<input id="radar-date" type="date"></label>
+      <label>時刻<input id="radar-time" type="time" step="600"></label>
+      <label>地域
+        <select id="radar-region">
+          <option value="全国">全国</option>
+          <option value="北海道地方（北西部）">北海道地方（北西部）</option>
+          <option value="北海道地方（東部）">北海道地方（東部）</option>
+          <option value="北海道地方（南西部）">北海道地方（南西部）</option>
+          <option value="東北地方（北部）">東北地方（北部）</option>
+          <option value="東北地方（南部）">東北地方（南部）</option>
+          <option value="関東地方">関東地方</option>
+          <option value="甲信地方">甲信地方</option>
+          <option value="東海地方">東海地方</option>
+          <option value="北陸地方（東部）">北陸地方（東部）</option>
+          <option value="北陸地方（西部）">北陸地方（西部）</option>
+          <option value="近畿地方">近畿地方</option>
+          <option value="中国地方">中国地方</option>
+          <option value="四国地方">四国地方</option>
+          <option value="九州地方（北部）">九州地方（北部）</option>
+          <option value="九州地方（南部）">九州地方（南部）</option>
+          <option value="奄美地方">奄美地方</option>
+          <option value="沖縄本島">沖縄本島</option>
+          <option value="大東島">大東島</option>
+          <option value="宮古・八重山地方">宮古・八重山地方</option>
+        </select>
+      </label>
+    </div>
+    <p class="field-note">GPV Weatherの過去雨雲レーダーを使用します。時刻は10分単位で指定してください。</p>
+  </section>
+
+  <section class="card"><h2>選択内容</h2><div id="plan"></div></section>
+  <div class="actions"><button id="build">PDF作成</button></div>
+  <pre id="log"></pre>
+  <section class="card"><h2>アメダス</h2><p>V2では自動取得はまだ行いません。次段階で「観測値CSV + 観測所位置CSV」を読み込み、地図ページをPDFに追加します。</p></section>
+</main>
+<script src="config.js"></script><script src="charts.js"></script><script src="app.js"></script>
+</body></html>
