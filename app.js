@@ -26,10 +26,25 @@ const radarTimeEl=$("#radar-time");
 const radarRegionEl=$("#radar-region");
 
 function todayJST(){ return new Date(Date.now()+9*3600*1000).toISOString().slice(0,10); }
-dateEl.value = todayJST();
+function dateISO(input){
+  const digits=input.value.trim();
+  if(!/^\d{8}$/.test(digits)) return null;
+  const year=Number(digits.slice(0,4));
+  const month=Number(digits.slice(4,6));
+  const day=Number(digits.slice(6,8));
+  const date=new Date(Date.UTC(year,month-1,day));
+  if(year<1000 || date.getUTCFullYear()!==year || date.getUTCMonth()!==month-1 || date.getUTCDate()!==day) return null;
+  return `${digits.slice(0,4)}-${digits.slice(4,6)}-${digits.slice(6,8)}`;
+}
+function validDates(){
+  if(!dateISO(dateEl)) return false;
+  if(radarSelected() && radarDateEl && !dateISO(radarDateEl)) return false;
+  return true;
+}
+dateEl.value = todayJST().replaceAll("-","");
 if(radarDateEl) radarDateEl.value = dateEl.value;
 if(radarTimeEl) radarTimeEl.value = `${hourEl.value}:00`;
-function targetUTC(){ return new Date(`${dateEl.value}T${hourEl.value}:00:00Z`); }
+function targetUTC(){ return new Date(`${dateISO(dateEl)}T${hourEl.value}:00:00Z`); }
 function addHours(d,h){ return new Date(d.getTime()+h*3600*1000); }
 function pad(n){ return String(n).padStart(2,"0"); }
 function stamp(d,withMinute=false){
@@ -51,7 +66,7 @@ function updateRadarOptions(){
 }
 
 function radarDateObject(){
-  const date=radarDateEl?.value || dateEl.value;
+  const date=(radarDateEl && dateISO(radarDateEl)) || dateISO(dateEl);
   const time=radarTimeEl?.value || `${hourEl.value}:00`;
   return radarTimezoneEl?.value==="JST"
     ? new Date(`${date}T${time}:00+09:00`)
@@ -171,6 +186,10 @@ function makePlan(c){
 }
 
 function renderPlan(){
+  if(!validDates()){
+    planEl.innerHTML="<span class='bad'>日付は YYYYMMDD の8桁で正しく入力してください（例：20261102）。</span>";
+    return;
+  }
   const plans=selected().map(makePlan);
   if(!plans.length){ planEl.innerHTML="<span class='warn'>まだ資料が選択されていません。</span>"; return; }
   planEl.innerHTML=plans.map(p=>`<div class="plan-row"><b>${p.c.id}</b> — ${p.c.source==="surface"||p.c.source==="satellite"?"対象":"解析/初期"}時刻: ${fmt(p.sourceTime)}${p.note?`<br><small>${p.note}</small>`:""}${!p.available?`<br><small class="bad">※この資料は選択した時刻には通常作成されません</small>`:""}</div>`).join("");
@@ -269,6 +288,10 @@ async function fetchPlan(p){
   throw new Error("unknown source");
 }
 async function build(){
+  if(!validDates()){
+    alert("日付は YYYYMMDD の8桁で正しく入力してください（例：20261102）。");
+    return;
+  }
   const plans=selected().map(makePlan); if(!plans.length){alert("資料を選択してください。");return;}
   logEl.textContent=""; const out=await PDFDocument.create();
   for(let i=0;i<plans.length;i++){
@@ -286,7 +309,7 @@ async function build(){
   }
   if(!out.getPageCount()){logEl.textContent+="\nPDFに追加できたページがありません。\n";return;}
   const b=await out.save(), blob=new Blob([b],{type:"application/pdf"}), a=document.createElement("a");
-  a.href=URL.createObjectURL(blob); a.download=`weather_${dateEl.value.replaceAll("-","")}_${hourEl.value}UTC_${modeEl.value}.pdf`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+  a.href=URL.createObjectURL(blob); a.download=`weather_${dateEl.value}_${hourEl.value}UTC_${modeEl.value}.pdf`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),5000);
   logEl.textContent+=`\n完成: ${out.getPageCount()} pages\n`;
 }
 listEl.addEventListener("change",()=>{
@@ -294,6 +317,6 @@ listEl.addEventListener("change",()=>{
   renderPlan();
 });
 radarTimezoneEl?.addEventListener("change",renderPlan);
-radarDateEl?.addEventListener("change",renderPlan);
+radarDateEl?.addEventListener("input",renderPlan);
 radarTimeEl?.addEventListener("change",renderPlan);
-radarRegionEl?.addEventListener("change",renderPlan); dateEl.addEventListener("change",renderPlan); hourEl.addEventListener("change",renderCharts); modeEl.addEventListener("change",renderCharts); $("#build").addEventListener("click",build); renderCharts();
+radarRegionEl?.addEventListener("change",renderPlan); dateEl.addEventListener("input",renderPlan); hourEl.addEventListener("change",renderCharts); modeEl.addEventListener("change",renderCharts); $("#build").addEventListener("click",build); renderCharts();

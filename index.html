@@ -12,7 +12,7 @@
   <h1>気象資料PDF作成</h1>
   <p class="lead">指定日時に対応する気象資料を選択し、1つのPDFとして出力します。</p>
   <section class="card"><div class="grid">
-    <label>対象日時<input id="date" type="date"></label>
+    <label>対象日時<input id="date" type="text" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" placeholder="YYYYMMDD" autocomplete="off" aria-label="対象日付（年月日8桁）"></label>
     <label>時刻<select id="hour">
       <option value="00" class="major-time">00 UTC（09 JST）</option><option value="03">03 UTC（12 JST）</option>
       <option value="06">06 UTC（15 JST）</option><option value="09">09 UTC（18 JST）</option>
@@ -32,7 +32,7 @@
           <option value="JST">JST（日本時間）</option>
         </select>
       </label>
-      <label>日付<input id="radar-date" type="date"></label>
+      <label>日付<input id="radar-date" type="text" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" placeholder="YYYYMMDD" autocomplete="off" aria-label="レーダー日付（年月日8桁）"></label>
       <label>時刻<input id="radar-time" type="time" step="600"></label>
       <label>地域
         <select id="radar-region">
